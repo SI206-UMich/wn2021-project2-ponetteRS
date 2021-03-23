@@ -101,29 +101,47 @@ def extra_credit(filepath):
 class TestCases(unittest.TestCase):
 
     # call get_search_links() and save it to a static variable: search_urls
+    search_urls = get_search_links()
 
 
     def test_get_titles_from_search_results(self):
         # call get_titles_from_search_results() on search_results.htm and save to a local variable
+        lst_titles = get_titles_from_search_results("search_results.htm")
 
         # check that the number of titles extracted is correct (20 titles)
+        self.assertEqual(len(lst_titles), 20, "Length is not 20")
 
         # check that the variable you saved after calling the function is a list
+        self.assertEqual(type(lst_titles), "<class 'list'>", "Type is not list")
 
         # check that each item in the list is a tuple
 
+        for item in lst_titles:
+            if type(item)  is tuple == False:
+                return "Items in lst_titles not all tuple"
+
         # check that the first book and author tuple is correct (open search_results.htm and find it)
+        #I went to the website and picked the first result assuming they will match
+        self.assertEqual(lst_titles[0], ("Harry Potter and the Deathly Hallows (Harry Potter, #7)","J.K. Rowling"), "First book and author are not correct")
 
         # check that the last title is correct (open search_results.htm and find it)
+        #I went to the website and picked the last result assuming they will match
+        self.assertEqual(lst_titles[-1], ("The Magical Worlds of Harry Potter: A Treasury of Myths, Legends, and Fascinating Facts", "David Colbert"), "Last book and author are not correct")
 
     def test_get_search_links(self):
         # check that TestCases.search_urls is a list
+        self.assertEqual(type(search_urls) is list, True, "search_urls is not a list")
 
         # check that the length of TestCases.search_urls is correct (10 URLs)
-
+        self.assertEqual(len(TestCases.search_urls), 10, "Length of TestCases.search_urls is not 10")
 
         # check that each URL in the TestCases.search_urls is a string
+        for url in TestCases.search_urls:
+            if type(url) is not str:
+                return "Not all urls in TestCases.search_urls are strings"
+                
         # check that each URL contains the correct url for Goodreads.com followed by /book/show/
+        #FIXME
 
 
     def test_get_book_summary(self):
