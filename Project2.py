@@ -15,7 +15,29 @@ def get_titles_from_search_results(filename):
     [('Book title 1', 'Author 1'), ('Book title 2', 'Author 2')...]
     """
 
-    pass
+    with open(filename) as f:
+        file = f.read()
+
+    books_lst = []
+    author_lst = []
+    final_lst = [] 
+
+
+    soup = BeautifulSoup(file, "html.parser")
+
+    author_names = soup.find_all("div", class_="authorName__container") 
+    book_titles = soup.find_all("a", class_="bookTitle") 
+
+    for author in author_names:
+        author_lst.append(author.text.strip())
+    
+    for book in book_titles:
+        books_lst.append(book.text.strip())
+    
+    for i in range(len(book_titles)):
+        final_lst.append((books_lst[i], author_lst[i]))
+
+    return final_lst
 
 
 def get_search_links():
@@ -32,7 +54,19 @@ def get_search_links():
 
     """
 
-    pass
+    url = "https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc"
+    content = requests.get(url)
+    links = []
+    soup = BeautifulSoup(content.text, "lxml")
+    table = soup.find("div", class_="leftContainer")
+    tags = table.find_all("a")
+
+    for tag in tags:
+        href = tag["href"]
+        if href.startswith("/book/show/"):
+            links.append(f"https://www.goodreads.com{href}")
+
+    return links
 
 
 def get_book_summary(book_url):
@@ -101,7 +135,9 @@ def extra_credit(filepath):
 class TestCases(unittest.TestCase):
 
     # call get_search_links() and save it to a static variable: search_urls
+    # search_urls = get_search_links()
     search_urls = get_search_links()
+    
 
 
     def test_get_titles_from_search_results(self):
@@ -112,7 +148,7 @@ class TestCases(unittest.TestCase):
         self.assertEqual(len(lst_titles), 20, "Length is not 20")
 
         # check that the variable you saved after calling the function is a list
-        self.assertEqual(type(lst_titles), "<class 'list'>", "Type is not list")
+        self.assertIsInstance(lst_titles, list)
 
         # check that each item in the list is a tuple
 
@@ -129,8 +165,10 @@ class TestCases(unittest.TestCase):
         self.assertEqual(lst_titles[-1], ("The Magical Worlds of Harry Potter: A Treasury of Myths, Legends, and Fascinating Facts", "David Colbert"), "Last book and author are not correct")
 
     def test_get_search_links(self):
+        #helps set up
+        
         # check that TestCases.search_urls is a list
-        self.assertEqual(type(search_urls) is list, True, "search_urls is not a list")
+        self.assertEqual(type(TestCases.search_urls) is list, True, "search_urls is not a list")
 
         # check that the length of TestCases.search_urls is correct (10 URLs)
         self.assertEqual(len(TestCases.search_urls), 10, "Length of TestCases.search_urls is not 10")
@@ -139,29 +177,37 @@ class TestCases(unittest.TestCase):
         for url in TestCases.search_urls:
             if type(url) is not str:
                 return "Not all urls in TestCases.search_urls are strings"
-                
+
         # check that each URL contains the correct url for Goodreads.com followed by /book/show/
-        #FIXME
+        #FIXME what makes an url correct?
 
 
-    def test_get_book_summary(self):
+    def test_get_book_summary(self): 
+        #start after first two functions running bc build off each other
         # create a local variable – summaries – a list containing the results from get_book_summary()
+        summaries = []
+
         # for each URL in TestCases.search_urls (should be a list of tuples)
+        for url in TestCases.search_urls:
+            summaries.append(get_book_summary(url))
 
         # check that the number of book summaries is correct (10)
-
+        self.assertEqual(len(summaries), 10)
             # check that each item in the list is a tuple
-
+        for summary in summaries:
+            self.assertIsInstance(summary, tuple)
             # check that each tuple has 3 elements
-
+            self.assertEqual(len(summary), 3)
             # check that the first two elements in the tuple are string
-
+            self.assertIsInstance(summary[0], str)
+            self.assertIsInstance(summary[1], str)
             # check that the third element in the tuple, i.e. pages is an int
-
+            self.assertIsInstance(summary[2], int)
             # check that the first book in the search has 337 pages
-
+        self.assertEqual(len(summaries[0][2]), 337) #is this the correct indentation?
 
     def test_summarize_best_books(self):
+        pass
         # call summarize_best_books and save it to a variable
 
         # check that we have the right number of best books (20)
@@ -176,6 +222,7 @@ class TestCases(unittest.TestCase):
 
 
     def test_write_csv(self):
+        pass
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
 
         # call write csv on the variable you saved and 'test.csv'
