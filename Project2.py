@@ -42,7 +42,7 @@ def get_titles_from_search_results(filename):
     
     for i in range(len(book_titles)):
         final_lst.append((books_lst[i], author_lst[i]))
-    #print(books_lst, author_lst, final_lst)
+    #print(books_lst, author_lst, final_lst) #to test
 
     return final_lst
 
