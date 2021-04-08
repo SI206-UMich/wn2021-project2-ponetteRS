@@ -23,7 +23,7 @@ def get_titles_from_search_results(filename):
     final_lst = [] 
 
     
-    soup = BeautifulSoup(file, "lxml")
+    soup = BeautifulSoup(file, "lxml") #added for continuity
   
     soup2 = soup.find_all("tr", itemtype="http://schema.org/Book") #larger piece
     author_names = []
