@@ -64,7 +64,7 @@ def get_search_links():
     url = "https://www.goodreads.com/search?q=fantasy&qid=NwUsLiA2Nc"
     content = requests.get(url)
     links = []
-    soup = BeautifulSoup(content.text, "lxml")
+    soup = BeautifulSoup(content.text, "lxml") #keeping same for continuity
     table = soup.find("div", class_="leftContainer")
     tags = table.find_all("a")
 
