@@ -91,7 +91,7 @@ def get_book_summary(book_url):
     """
     
     info = requests.get(book_url)
-    soup = BeautifulSoup(info.text, "lxml")
+    soup = BeautifulSoup(info.text, "lxml") #kept the same for continuity
 
     title = soup.find("h1", class_="gr-h1 gr-h1--serif").text.strip()
     author = soup.find("div", class_="authorName__container").text
