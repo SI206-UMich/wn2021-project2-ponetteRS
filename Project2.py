@@ -22,10 +22,16 @@ def get_titles_from_search_results(filename):
     author_lst = []
     final_lst = [] 
 
+    
+    soup = BeautifulSoup(file, "lxml")
+  
+    soup2 = soup.find_all("tr", itemtype="http://schema.org/Book") #larger piece
+    author_names = []
 
-    soup = BeautifulSoup(file, "html.parser")
+    for i in soup2:
+        author = i.find("div", class_="authorName__container")
+        author_names.append(author)
 
-    author_names = soup.find_all("div", class_="authorName__container") 
     book_titles = soup.find_all("a", class_="bookTitle") 
 
     for author in author_names:
@@ -36,6 +42,7 @@ def get_titles_from_search_results(filename):
     
     for i in range(len(book_titles)):
         final_lst.append((books_lst[i], author_lst[i]))
+    #print(books_lst, author_lst, final_lst)
 
     return final_lst
 
@@ -158,11 +165,12 @@ def write_csv(data, filename):
 
     This function should not return anything.
     """
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), filename), "w") as csv_content:
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), filename), 'w') as csv_content:
         csv_file = csv.writer(csv_content, delimiter=",")
-        csv_file.writerow(["Book Title", "Author Name"])
+        csv_file.writerow(["Book title", "Author Name"])
+        print(data)
         for tup in data:
-            csv_file.writerow(tup)
+            csv_file.writerow(tup) #this doesn't seem to be writing to the file
 
 
 def extra_credit(filepath):
@@ -270,7 +278,7 @@ class TestCases(unittest.TestCase):
 
     def test_write_csv(self):
         # call get_titles_from_search_results on search_results.htm and save the result to a variable
-        best_books = summarize_best_books("search_results.htm")
+        best_books = get_titles_from_search_results("search_results.htm")
         # call write csv on the variable you saved and 'test.csv'
         write_csv(best_books, "test.csv")
         # read in the csv that you wrote (create a variable csv_lines - a list containing all the lines in the csv you just wrote to above)
@@ -284,17 +292,18 @@ class TestCases(unittest.TestCase):
         # check that there are 21 lines in the csv
         self.assertEqual(len(lst), 21)
         # check that the header row is correct
-        self.assertEqual(lst[0], ["Category", "Book title", "URL"])
+        self.assertEqual(lst[0], ["Book title", "Author Name"])
         # check that the next row is 'Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'
         self.assertEqual(lst[1], ['Harry Potter and the Deathly Hallows (Harry Potter, #7)', 'J.K. Rowling'])
         # check that the last row is 'Harry Potter: The Prequel (Harry Potter, #0.5)', 'J.K. Rowling'
-        self.assertEqual(lst[1], ['Harry Potter: The Prequel (Harry Potter, #0.5)', 'J.K. Rowling'])
+        self.assertEqual(lst[-1], ['Harry Potter: The Prequel (Harry Potter, #0.5)', 'J.K. Rowling'])
 
 
 
 if __name__ == '__main__':
     print(extra_credit("extra_credit.htm"))
-    unittest.main(verbosity=2)
+    unittest.main(verbosity=2) #commenting out to save time
+    #get_titles_from_search_results("search_results.htm")
 
 
 
